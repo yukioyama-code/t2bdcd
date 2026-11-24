@@ -1,6 +1,7 @@
-# Trabalho 2 — Coautoria parlamentar no Neo4j
-
-Trabalho de Banco de Dados para Ciência de Dados (BDCD) da UFSCar, desenvolvido por Carolina Megumi Nogai e Yuki Hiroji Oyama.
+# Trabalho 2 - BDCD - Coautoria parlamentar no Neo4j
+Banco de Dados para Ciência de Dados
+Carolina Megumi Nogai | 834418
+Yuki Hiroji Oyama | 830916
 
 O projeto analisa a participação de deputados na autoria de projetos de lei apresentados em 2025, incluindo a colaboração entre partidos. Os dados são do [Portal de Dados Abertos da Câmara dos Deputados](https://dadosabertos.camara.leg.br/swagger/api.html).
 
