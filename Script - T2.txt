@@ -1,0 +1,106 @@
+--Visualização dos dados 
+MATCH (n)
+OPTIONAL MATCH (n)-[r]->(m)
+RETURN n, r, m
+
+
+--Consulta 1
+MATCH (d1:Deputado)-[a1:AUTOR_DE]->(p:`Proposições`)
+      <-[a2:AUTOR_DE]-(d2:Deputado)
+WHERE p.siglaTipo = 'PL'
+  AND left(toString(p.dataApresentacao), 4) = '2025'
+  AND d1 <> d2
+WITH p,
+     toUpper(trim(a1.siglaPartidoAutor)) AS partidoA,
+     toUpper(trim(a2.siglaPartidoAutor)) AS partidoB
+WHERE partidoA <> ''
+  AND partidoB <> ''
+  AND partidoA < partidoB
+RETURN partidoA,
+       partidoB,
+       count(DISTINCT p) AS totalPLsEmComum
+ORDER BY totalPLsEmComum DESC, partidoA, partidoB
+LIMIT 10
+
+
+--Consulta 2
+
+MATCH (d:Deputado)-[:AUTOR_DE]->(p:`Proposições`)
+WHERE p.siglaTipo = 'PL'
+  AND left(toString(p.dataApresentacao), 4) = '2025'
+WITH d, count(DISTINCT p) AS totalPLs
+RETURN d.nome AS deputado, totalPLs
+ORDER BY totalPLs DESC, deputado, d.uri
+LIMIT 10
+
+--Consulta 3
+
+MATCH (d:Deputado)-[a:AUTOR_DE]->(p:`Proposições`)
+WHERE p.siglaTipo = 'PL'
+  AND left(toString(p.dataApresentacao), 4) = '2025'
+WITH p,
+     count(DISTINCT d) AS totalDeputados,
+     collect(DISTINCT
+       toUpper(trim(a.siglaPartidoAutor))
+     ) AS partidos
+WHERE totalDeputados >= 2
+WITH count(*) AS totalPLsCoautoria,
+     count(CASE WHEN size(partidos) > 1 THEN 1 END)
+       AS totalInterpartidarios
+RETURN totalPLsCoautoria,
+       totalInterpartidarios,
+       round(
+         100.0 * totalInterpartidarios / totalPLsCoautoria,
+         2
+       ) AS percentual;
+
+
+--Consulta 4
+
+MATCH (d:Deputado)-[a:AUTOR_DE]->(p:`Proposições`)
+WHERE p.siglaTipo = 'PL'
+  AND left(toString(p.dataApresentacao), 4) = '2025'
+  AND a.siglaPartidoAutor IS NOT NULL
+  AND trim(a.siglaPartidoAutor) <> ''
+
+WITH p,
+     count(DISTINCT d) AS totalDeputados,
+     collect(DISTINCT
+       toUpper(trim(a.siglaPartidoAutor))
+     ) AS partidos
+
+WHERE size(partidos) > 1
+
+RETURN p.numero AS numeroPL,
+       totalDeputados,
+       size(partidos) AS totalPartidos,
+       partidos
+ORDER BY totalPartidos DESC, totalDeputados DESC
+LIMIT 10;
+
+--Consulta 5
+MATCH (d1:Deputado)-[a1:AUTOR_DE]->(p:`Proposições`)
+      <-[a2:AUTOR_DE]-(d2:Deputado)
+WHERE p.siglaTipo = 'PL'
+  AND left(toString(p.dataApresentacao), 4) = '2025'
+  AND d1 <> d2
+  AND a1.siglaPartidoAutor IS NOT NULL
+  AND a2.siglaPartidoAutor IS NOT NULL
+  AND trim(a1.siglaPartidoAutor) <> ''
+  AND trim(a2.siglaPartidoAutor) <> ''
+  AND toUpper(trim(a1.siglaPartidoAutor)) <>
+      toUpper(trim(a2.siglaPartidoAutor))
+WITH d1,
+     count(DISTINCT d2) AS coautoresOutrosPartidos,
+     count(DISTINCT p) AS projetosCompartilhados
+RETURN d1.nome AS deputado,
+       coautoresOutrosPartidos,
+       projetosCompartilhados
+ORDER BY coautoresOutrosPartidos DESC,
+         projetosCompartilhados DESC
+LIMIT 10;
+
+
+
+
+
