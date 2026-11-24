@@ -20,4 +20,3 @@ O projeto analisa a participação de deputados na autoria de projetos de lei ap
 3. Use `proposicoesAutores-2025.csv` para mapear a relação `AUTOR_DE`. Na origem, associe `uriAutor` à propriedade `uri` de `Deputado`. No destino, associe `idProposicao` à propriedade `id` de `Proposições`. Inclua `siglaPartidoAutor` como propriedade da relação.
 4. Execute a importação e rode o script na aba **Query**, no mesmo banco. Nas consultas sobre projetos de lei, o recorte usa `siglaTipo` e `dataApresentacao`.
 
-[Relatório do Trabalho 2](https://docs.google.com/document/d/1jEE83a04XdFkKGmSn5JPhBqrrxVhVfy9en8Jlgh8UjU)
